@@ -56,7 +56,7 @@ namespace WarehouseService.Controllers
         }
         
         [HttpDelete("reserves/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> CancelReservation(int id)
@@ -64,7 +64,7 @@ namespace WarehouseService.Controllers
             try
             {
                 await _warehouseService.CancelReservationAsync(id);
-                return Ok();
+                return NoContent();
             }
             catch (ReserveNotFoundException)
             {

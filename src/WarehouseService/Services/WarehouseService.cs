@@ -28,11 +28,11 @@ namespace WarehouseService.Services
 
         public async Task<int> ReserveAsync(ReserveModel model)
         {
-            await using var transaction = _context.Database.BeginTransaction();
-            
             var productIds = model.Items
                 .Select(i => i.Id)
                 .ToList();
+            
+            await using var transaction = _context.Database.BeginTransaction();
             
             try
             {
