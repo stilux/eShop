@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using DeliveryService.Models;
+using DeliveryService.Models.Dtos;
 using DeliveryService.Services;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DeliveryService.Controllers
 {
@@ -24,7 +22,7 @@ namespace DeliveryService.Controllers
         [HttpGet("methods")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<DeliveryMethodModel>>> Get([FromQuery] string address, [FromQuery] DateTime? deliveryDate)
+        public async Task<ActionResult<IEnumerable<DeliveryMethodDto>>> Get([FromQuery] string address, [FromQuery] DateTime? deliveryDate)
         {
             if (address == null)
                 return BadRequest($"{nameof(address)} is empty.");
@@ -39,7 +37,7 @@ namespace DeliveryService.Controllers
         [HttpPost("requests")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult<DeliveryRequestModel>> CreateDeliveryRequest(CreateDeliveryRequestModel model)
+        public async Task<ActionResult<DeliveryRequestDto>> CreateDeliveryRequest(CreateDeliveryRequestDto model)
         {
             var deliveryRequest = await _deliveryService.CreateDeliveryRequestAsync(model);
             if (deliveryRequest != null)

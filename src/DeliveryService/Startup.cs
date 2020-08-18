@@ -1,5 +1,5 @@
 using DeliveryService.Filters;
-using DeliveryService.Providers;
+using DeliveryService.Infrastructure;
 using DeliveryService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

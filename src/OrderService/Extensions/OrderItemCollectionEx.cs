@@ -7,7 +7,7 @@ namespace OrderService.Extensions
 {
     public static class OrderItemCollectionEx
     {
-        public static IEnumerable<OrderItemDto> MapToOrderItemModelCollection(this IEnumerable<OrderItem> orderItem)
+        public static IEnumerable<OrderItemDto> MapToOrderItemDtoCollection(this IEnumerable<OrderItem> orderItem)
         {
             return orderItem
                 .Select(i => new OrderItemDto

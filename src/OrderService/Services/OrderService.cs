@@ -93,7 +93,7 @@ namespace OrderService.Services
             await _context.AddRangeAsync(addedItems);
             await _context.SaveChangesAsync();
             
-            return addedItems.MapToOrderItemModelCollection();
+            return addedItems.MapToOrderItemDtoCollection();
         }
 
         public async Task RemoveFromCartAsync(int orderId, RemoveFromCartDto model)

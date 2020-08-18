@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using DeliveryService.Extensions;
+using DeliveryService.Infrastructure;
 using DeliveryService.Models;
-using DeliveryService.Providers;
+using DeliveryService.Models.Dtos;
 
 namespace DeliveryService.Services
 {
@@ -18,30 +19,31 @@ namespace DeliveryService.Services
             _context = context;
         }
 
-        public Task<ICollection<DeliveryMethodModel>> GetDeliveryMethodsAsync(string address, DateTime deliveryDate)
+        public Task<ICollection<DeliveryMethodDto>> GetDeliveryMethodsAsync(string address, DateTime deliveryDate)
         {
-            var deliveryMethods = new List<DeliveryMethodModel>();
+            var deliveryMethods = new List<DeliveryMethodDto>();
             for (var i = 0; i < RandomNumberGenerator.GetInt32(1, DeliveryMethods.Length); i++)
             {
-                deliveryMethods.Add(new DeliveryMethodModel
+                deliveryMethods.Add(new DeliveryMethodDto
                 {
                     DeliveryMethod = DeliveryMethods[i],
+                    DeliveryAddress = address,
                     DeliveryDate = deliveryDate,
                     DeliveryCost = RandomNumberGenerator.GetInt32(100, 300)
                 });
             }
 
-            return Task.FromResult<ICollection<DeliveryMethodModel>>(deliveryMethods);
+            return Task.FromResult<ICollection<DeliveryMethodDto>>(deliveryMethods);
         }
 
-        public async Task<DeliveryRequestModel> CreateDeliveryRequestAsync(CreateDeliveryRequestModel model)
+        public async Task<DeliveryRequestDto> CreateDeliveryRequestAsync(CreateDeliveryRequestDto model)
         {
             var request = model.MapToDeliveryRequest();
             
             await _context.AddAsync(request);
             await _context.SaveChangesAsync();
             
-            return request.MapToDeliveryRequestModel();
+            return request.MapToDeliveryRequestDto();
         }
     }
 }

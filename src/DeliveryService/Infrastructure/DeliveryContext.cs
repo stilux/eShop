@@ -1,7 +1,7 @@
-﻿using DeliveryService.Entity;
+﻿using DeliveryService.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DeliveryService.Providers
+namespace DeliveryService.Infrastructure
 {
     public class DeliveryContext : DbContext
     {

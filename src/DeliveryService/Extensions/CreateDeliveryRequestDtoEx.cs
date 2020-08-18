@@ -1,12 +1,12 @@
 ﻿using System;
-using DeliveryService.Entity;
 using DeliveryService.Models;
+using DeliveryService.Models.Dtos;
 
 namespace DeliveryService.Extensions
 {
-    public static class CreateDeliveryRequestModelEx
+    public static class CreateDeliveryRequestDtoEx
     {
-        public static DeliveryRequest MapToDeliveryRequest(this CreateDeliveryRequestModel model)
+        public static DeliveryRequest MapToDeliveryRequest(this CreateDeliveryRequestDto model)
         {
             return new DeliveryRequest
             {
@@ -14,7 +14,7 @@ namespace DeliveryService.Extensions
                 CreationDate = DateTime.Now,
                 Recipient = model.Recipient,
                 DeliveryAddress = model.DeliveryAddress,
-                PlannedDeliveryDate = model.PlannedDeliveryDate
+                DeliveryDate = model.DeliveryDate
             };
         }
     }

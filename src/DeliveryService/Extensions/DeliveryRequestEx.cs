@@ -1,20 +1,20 @@
-﻿using DeliveryService.Entity;
-using DeliveryService.Models;
+﻿using DeliveryService.Models;
+using DeliveryService.Models.Dtos;
 
 namespace DeliveryService.Extensions
 {
     public static class DeliveryRequestEx
     {
-        public static DeliveryRequestModel MapToDeliveryRequestModel(this DeliveryRequest request)
+        public static DeliveryRequestDto MapToDeliveryRequestDto(this DeliveryRequest request)
         {
-            return new DeliveryRequestModel
+            return new DeliveryRequestDto
             {
                 Id = request.Id,
                 Recipient = request.Recipient,
                 CreationDate = request.CreationDate,
                 DeliveryAddress = request.DeliveryAddress,
                 OrderId = request.OrderId,
-                PlannedDeliveryDate = request.PlannedDeliveryDate
+                DeliveryDate = request.DeliveryDate
             };
         }
     }

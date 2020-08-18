@@ -17,7 +17,7 @@ namespace DeliveryService.Migrations
                     OrderId = table.Column<int>(nullable: false),
                     DeliveryAddress = table.Column<string>(nullable: false),
                     Recipient = table.Column<string>(nullable: false),
-                    PlannedDeliveryDate = table.Column<DateTime>(nullable: false),
+                    DeliveryDate = table.Column<DateTime>(nullable: false),
                     TrackingNumber = table.Column<string>(nullable: true),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     Delivered = table.Column<bool>(nullable: false, defaultValue: false)
@@ -26,6 +26,11 @@ namespace DeliveryService.Migrations
                 {
                     table.PrimaryKey("PK_DeliveryRequests", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeliveryRequests_OrderId",
+                table: "DeliveryRequests",
+                column: "OrderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
