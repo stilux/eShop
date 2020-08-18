@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WarehouseService.Exceptions;
-using WarehouseService.Models;
+using WarehouseService.Models.Dtos;
 using WarehouseService.Services;
 
 namespace WarehouseService.Controllers
@@ -24,9 +24,9 @@ namespace WarehouseService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<int>> GetBalance(int id)
         {
-            var warehouseItem = await _warehouseService.GetWarehouseItemAsync(id);
-            if (warehouseItem != null)
-                return Ok(warehouseItem.Balance);
+            var balance = await _warehouseService.GetProductBalanceAsync(id);
+            if (balance.HasValue)
+                return Ok(balance.Value);
             return NotFound();
         }
         
@@ -34,7 +34,7 @@ namespace WarehouseService.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult<int>> Reserve(ReserveModel model)
+        public async Task<ActionResult<int>> Reserve(ReserveDto model)
         {
             try
             {

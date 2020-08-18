@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WarehouseService.Models;
 
 namespace WarehouseService.Entity
 {

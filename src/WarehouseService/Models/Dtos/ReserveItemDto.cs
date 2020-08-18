@@ -1,9 +1,8 @@
-﻿namespace WarehouseService.Models
+﻿namespace WarehouseService.Models.Dtos
 {
-    public class ReserveItemModel
+    public class ReserveItemDto
     {
         public int Id { get; set; }
-        
         public short Quantity { get; set; }
     }
 }

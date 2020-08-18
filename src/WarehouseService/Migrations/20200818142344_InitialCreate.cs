@@ -40,15 +40,13 @@ namespace WarehouseService.Migrations
                 name: "ReserveItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ReserveId = table.Column<int>(nullable: false),
                     ProductId = table.Column<int>(nullable: false),
                     Quantity = table.Column<short>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReserveItems", x => x.Id);
+                    table.PrimaryKey("PK_ReserveItems", x => new { x.ReserveId, x.ProductId });
                     table.ForeignKey(
                         name: "FK_ReserveItems_Reserves_ReserveId",
                         column: x => x.ReserveId,
@@ -56,11 +54,6 @@ namespace WarehouseService.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ReserveItems_ProductId",
-                table: "ReserveItems",
-                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReserveItems_ReserveId",

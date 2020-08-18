@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WarehouseService.Entity;
+using WarehouseService.Infrastructure.Configurations;
+using WarehouseService.Models;
 
-namespace WarehouseService.Providers
+namespace WarehouseService.Infrastructure
 {
     public class WarehouseContext : DbContext
     {

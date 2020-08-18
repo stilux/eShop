@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WarehouseService.Filters;
-using WarehouseService.Providers;
+using WarehouseService.Infrastructure;
 using WarehouseService.Services;
 
 namespace WarehouseService

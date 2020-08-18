@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WarehouseService.Providers;
+using WarehouseService.Infrastructure;
 
 namespace WarehouseService.Migrations
 {
     [DbContext(typeof(WarehouseContext))]
-    [Migration("20200815153706_InitialCreate")]
+    [Migration("20200818142344_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,12 +36,10 @@ namespace WarehouseService.Migrations
                     b.ToTable("Reserves");
                 });
 
-            modelBuilder.Entity("WarehouseService.Entity.ReserveItem", b =>
+            modelBuilder.Entity("WarehouseService.Models.ReserveItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<int>("ReserveId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
@@ -49,19 +47,14 @@ namespace WarehouseService.Migrations
                     b.Property<short>("Quantity")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("ReserveId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
+                    b.HasKey("ReserveId", "ProductId");
 
                     b.HasIndex("ReserveId");
 
                     b.ToTable("ReserveItems");
                 });
 
-            modelBuilder.Entity("WarehouseService.Entity.WarehouseItem", b =>
+            modelBuilder.Entity("WarehouseService.Models.WarehouseItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,9 +82,9 @@ namespace WarehouseService.Migrations
                     b.ToTable("WarehouseItems");
                 });
 
-            modelBuilder.Entity("WarehouseService.Entity.ReserveItem", b =>
+            modelBuilder.Entity("WarehouseService.Models.ReserveItem", b =>
                 {
-                    b.HasOne("WarehouseService.Entity.Reserve", "Reserve")
+                    b.HasOne("WarehouseService.Entity.Reserve", null)
                         .WithMany("ReserveItems")
                         .HasForeignKey("ReserveId")
                         .OnDelete(DeleteBehavior.Cascade)

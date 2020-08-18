@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using WarehouseService.Entity;
 using WarehouseService.Exceptions;
 using WarehouseService.Extensions;
+using WarehouseService.Infrastructure;
 using WarehouseService.Models;
-using WarehouseService.Providers;
+using WarehouseService.Models.Dtos;
 
 namespace WarehouseService.Services
 {
@@ -20,13 +21,16 @@ namespace WarehouseService.Services
             _context = context;
         }
 
-        public async Task<WarehouseItemModel> GetWarehouseItemAsync(int productId)
+        public async Task<int?> GetProductBalanceAsync(int productId)
         {
-            var item = await GetWarehouseItem(productId);
-            return item.ToWarehouseItemModel();
+            var item = await _context.WarehouseItems
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.ProductId == productId);
+            
+            return item?.Balance;
         }
 
-        public async Task<int> ReserveAsync(ReserveModel model)
+        public async Task<ReservationResultDto> ReserveAsync(ReserveDto model)
         {
             var productIds = model.Items
                 .Select(i => i.Id)
@@ -68,7 +72,7 @@ namespace WarehouseService.Services
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return reserve.Id;
+                return reserve.MapToReservationResultDto();
             }
             catch
             {
@@ -143,13 +147,6 @@ namespace WarehouseService.Services
             return await _context.WarehouseItems
                 .Where(i => productIds.Contains(i.ProductId))
                 .ToListAsync();
-        }
-
-        private async Task<WarehouseItem> GetWarehouseItem(int productId)
-        {
-            return await _context.WarehouseItems
-                .AsNoTracking()
-                .FirstOrDefaultAsync(i => i.ProductId == productId);
         }
     }
 }

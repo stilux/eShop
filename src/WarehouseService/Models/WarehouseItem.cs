@@ -1,4 +1,4 @@
-﻿namespace WarehouseService.Entity
+﻿namespace WarehouseService.Models
 {
     public class WarehouseItem
     {

@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WarehouseService.Entity;
+using WarehouseService.Models;
 
-namespace WarehouseService.Providers
+namespace WarehouseService.Infrastructure.Configurations
 {
     public class WarehouseItemConfiguration: IEntityTypeConfiguration<WarehouseItem>
     {
