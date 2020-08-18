@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProductSearchService.Models;
 
-namespace ProductSearchService.Providers
+namespace ProductSearchService.Infrastructure
 {
     public class ProductConfiguration: IEntityTypeConfiguration<Product>
     {

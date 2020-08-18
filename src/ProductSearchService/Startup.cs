@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductSearchService.Filters;
+using ProductSearchService.Infrastructure;
 using ProductSearchService.Models;
-using ProductSearchService.Providers;
 using ProductSearchService.Services;
 
 namespace ProductSearchService

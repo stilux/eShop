@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductSearchService.Models;
 
-namespace ProductSearchService.Providers
+namespace ProductSearchService.Infrastructure
 {
     public class ProductContext : DbContext
     {

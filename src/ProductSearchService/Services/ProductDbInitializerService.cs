@@ -2,8 +2,8 @@
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProductSearchService.Infrastructure;
 using ProductSearchService.Models;
-using ProductSearchService.Providers;
 
 namespace ProductSearchService.Services
 {

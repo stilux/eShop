@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using ProductSearchService.Dtos;
+using ProductSearchService.Extensions;
+using ProductSearchService.Infrastructure;
 using ProductSearchService.Models;
-using ProductSearchService.Providers;
 
 namespace ProductSearchService.Services
 {
@@ -24,20 +26,23 @@ namespace ProductSearchService.Services
             _cacheConfig = config.Value;
         }
         
-        public async Task<Product> GetAsync(int id)
+        public async Task<ProductDto> GetAsync(int id)
         {
-            return await _context.Products.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
+            return product?.MapToProductDto();
         }
         
-        public async Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<int> ids)
+        public async Task<IEnumerable<ProductDto>> GetByIdsAsync(IEnumerable<int> ids)
         {
-            return await _context.Products
+            var products = await _context.Products
                 .AsNoTracking()
                 .Where(p => ids.Contains(p.Id))
                 .ToListAsync();
+
+            return products.MapToProductDtoCollection();
         }
         
-        public async Task<IEnumerable<Product>> SearchAsync(string query, int take = 100)
+        public async Task<IEnumerable<ProductDto>> SearchAsync(string query, int take = 100)
         {
             var cacheEnabled = _cacheConfig.Enabled;
             IEnumerable<Product> products = null;
@@ -55,7 +60,8 @@ namespace ProductSearchService.Services
             {
                 products = await SearchInternalAsync(query);
             }
-            return products.Take(take);
+            
+            return products.Take(take).MapToProductDtoCollection();
         }
 
         private async Task<IList<Product>> SearchInternalAsync(string query)
