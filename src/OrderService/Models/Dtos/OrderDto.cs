@@ -7,6 +7,7 @@ namespace OrderService.Models.Dtos
     {
         public int Id { get; set; }
         public string OrderStatus { get; set; }
+        public string Customer { get; set; }
         public string PaymentMethod { get; set; }
         public bool Paid { get; set; }
         public string DeliveryMethod { get; set; }

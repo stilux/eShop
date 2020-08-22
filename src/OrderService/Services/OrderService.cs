@@ -47,7 +47,7 @@ namespace OrderService.Services
             return order.MapToOrderDto();
         }
 
-        public async Task CancelOrderAsync(int orderId)
+        public async Task ChangeOrderStatusAsync(int orderId, OrderStatus status)
         {
             var order = await _context.Orders.FindAsync(orderId);
             if (order == null)
@@ -56,7 +56,7 @@ namespace OrderService.Services
             if (order.Cancelled)
                 throw new OrderAlreadyCancelledException();
 
-            order.OrderStatusId = (byte) OrderStatus.Cancelled;
+            order.OrderStatusId = (byte) status;
             order.UpdateDate = DateTime.Now;
             
             await _context.SaveChangesAsync();
@@ -79,7 +79,16 @@ namespace OrderService.Services
             return await Task.FromResult(paymentUrl);
         }
 
-        public async Task<IEnumerable<OrderItemDto>> AddToCartAsync(int orderId, AddToCartDto model)
+        public async Task<IList<OrderItemDto>> GetCartItemsAsync(int orderId)
+        {
+            var orderItems = await _context.OrderItems
+                .Where(i => i.OrderId == orderId)
+                .ToListAsync();
+
+            return orderItems.MapToOrderItemDtoCollection();
+        }
+
+        public async Task<IList<OrderItemDto>> AddToCartAsync(int orderId, AddToCartDto model)
         {
             var addedItems = model.Items
                 .Select(i => new OrderItem

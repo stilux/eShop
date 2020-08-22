@@ -21,6 +21,7 @@ namespace OrderService.Extensions
                 Id = order.Id,
                 OrderStatus = ((Enums.OrderStatus)order.OrderStatusId).ToString(),
                 PaymentMethod = order.PaymentMethodId.HasValue ? ((Enums.PaymentMethod)order.PaymentMethodId).ToString() : null,
+                Customer = order.Customer,
                 Paid = order.Paid,
                 DeliveryMethod = order.DeliveryMethod,
                 DeliveryAddress = order.DeliveryAddress,

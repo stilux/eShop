@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using WarehouseService.Filters;
 using WarehouseService.Infrastructure;
 using WarehouseService.Services;
+using MassTransit;
+using WarehouseService.Configs;
 
 namespace WarehouseService
 {
@@ -21,6 +24,8 @@ namespace WarehouseService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureMassTransit(services);
+            
             services.AddControllers(options => { options.Filters.Add<ValidationFilter>(); })
                 .ConfigureApiBehaviorOptions(options =>
                 {
@@ -31,6 +36,31 @@ namespace WarehouseService
                 => options.UseNpgsql(_configuration.GetConnectionString("WarehouseDBConnection")));
             
             services.AddScoped<IWarehouseService, Services.WarehouseService>();
+        }
+
+        private void ConfigureMassTransit(IServiceCollection services)
+        {
+            var massTransitSettingSection = _configuration.GetSection("MassTransitConfig");
+            var massTransitConfig = massTransitSettingSection.Get<MassTransitConfig>();
+            
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumers(Assembly.GetExecutingAssembly());
+                x.SetKebabCaseEndpointNameFormatter();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.ConfigureEndpoints(context);
+                    cfg.Host(massTransitConfig.Host, massTransitConfig.VirtualHost,
+                        h =>
+                        {
+                            h.Username(massTransitConfig.Username);
+                            h.Password(massTransitConfig.Password);
+                        }
+                    );
+                });
+            });
+            
+            services.AddMassTransitHostedService();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

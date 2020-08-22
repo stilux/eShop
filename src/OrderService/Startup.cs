@@ -1,3 +1,6 @@
+using System;
+using System.Reflection;
+using MassTransit;
 using OrderService.Filters;
 using OrderService.Providers;
 using OrderService.Services;
@@ -7,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OrderService.Configs;
+using OrderService.Sagas.OrderProcessingSaga;
+using Shared.Contracts.Messages;
 
 namespace OrderService
 {
@@ -21,6 +27,8 @@ namespace OrderService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureMassTransit(services);
+            
             services.AddControllers(options => { options.Filters.Add<ValidationFilter>(); })
                 .ConfigureApiBehaviorOptions(options =>
                 {
@@ -31,6 +39,39 @@ namespace OrderService
                 => options.UseNpgsql(_configuration.GetConnectionString("OrderDBConnection")));
             
             services.AddScoped<IOrderService, OrderService.Services.OrderService>();
+        }
+
+        private void ConfigureMassTransit(IServiceCollection services)
+        {
+            var massTransitSettingSection = _configuration.GetSection("MassTransitConfig");
+            var massTransitConfig = massTransitSettingSection.Get<MassTransitConfig>();
+            
+            services.AddMassTransit(i =>
+            {              
+                i.AddConsumers(Assembly.GetExecutingAssembly());
+                i.AddActivities(Assembly.GetExecutingAssembly());
+                
+                var timeout = TimeSpan.FromSeconds(10);
+                i.AddRequestClient<IReserveProducts>(timeout);
+                
+                i.SetKebabCaseEndpointNameFormatter();
+                i.AddSagaStateMachine<OrderStateMachine, OrderState>()                
+                    .InMemoryRepository();
+                i.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.UseInMemoryOutbox();
+                    cfg.ConfigureEndpoints(context);                    
+                    cfg.Host(massTransitConfig.Host, massTransitConfig.VirtualHost,
+                        h =>
+                        {
+                            h.Username(massTransitConfig.Username);
+                            h.Password(massTransitConfig.Password);
+                        }
+                    );
+                });
+            });
+            
+            services.AddMassTransitHostedService();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

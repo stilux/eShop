@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.Enums;
 using OrderService.Services;
 using OrderService.Exceptions;
 using OrderService.Models.Dtos;
+using Shared.Contracts.Events;
 
 namespace OrderService.Controllers
 {
@@ -13,10 +16,12 @@ namespace OrderService.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, IPublishEndpoint publishEndpoint)
         {
             _orderService = orderService;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet("{id}")]
@@ -38,6 +43,38 @@ namespace OrderService.Controllers
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
         
+        [HttpPost("{id}/submit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public async Task<ActionResult<OrderDto>> SubmitOrder(int id)
+        {
+            try
+            {
+                await _orderService.ChangeOrderStatusAsync(id, OrderStatus.Submitted);
+                
+                await _publishEndpoint.Publish<IOrderSubmittedEvent>(new
+                {
+                    OrderId = id,
+                    CorrelationId = Guid.NewGuid()
+                });
+                return Ok();
+            }
+            catch (OrderNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (OrderAlreadyCancelledException)
+            {
+                return BadRequest("Order already canceled.");
+            }
+            catch (Exception)
+            {
+                return UnprocessableEntity();
+            }
+        }
+        
         [HttpPost("{id}/cancel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,7 +84,7 @@ namespace OrderService.Controllers
         {
             try
             {
-                await _orderService.CancelOrderAsync(id);
+                await _orderService.ChangeOrderStatusAsync(id, OrderStatus.Cancelled);
                 return Ok();
             }
             catch (OrderNotFoundException)

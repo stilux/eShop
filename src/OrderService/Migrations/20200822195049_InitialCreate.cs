@@ -39,7 +39,8 @@ namespace OrderService.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderStatusId = table.Column<byte>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
+                    CustomerId = table.Column<int>(nullable: false),
+                    Customer = table.Column<string>(nullable: false),
                     PaymentMethodId = table.Column<byte>(nullable: true),
                     DeliveryMethod = table.Column<string>(nullable: true),
                     DeliveryAddress = table.Column<string>(nullable: true),
@@ -99,6 +100,7 @@ namespace OrderService.Migrations
                 name: "IX_Orders_PaymentMethodId",
                 table: "Orders",
                 column: "PaymentMethodId");
+            
             
             migrationBuilder.InsertData(
                 table: "OrderStatus",

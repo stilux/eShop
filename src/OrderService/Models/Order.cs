@@ -13,7 +13,8 @@ namespace OrderService.Models
         public int Id { get; set; }
         public byte OrderStatusId { get; set; }
         public OrderStatus OrderStatus { get; set; }
-        public int UserId { get; set; }
+        public int CustomerId { get; set; }
+        public string Customer { get; set; }
         public byte? PaymentMethodId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public bool Paid => OrderStatusId == (byte) Enums.OrderStatus.Paid;

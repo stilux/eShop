@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService", "src\OrderSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService", "src\PaymentService\PaymentService.csproj", "{626C3B65-4BF2-4E25-89F1-28751C3ADA32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Contracts", "Shared.Contracts\Shared.Contracts.csproj", "{5B930893-6F66-4C60-B6DC-FFA57F2F10DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{626C3B65-4BF2-4E25-89F1-28751C3ADA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{626C3B65-4BF2-4E25-89F1-28751C3ADA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{626C3B65-4BF2-4E25-89F1-28751C3ADA32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B930893-6F66-4C60-B6DC-FFA57F2F10DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B930893-6F66-4C60-B6DC-FFA57F2F10DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B930893-6F66-4C60-B6DC-FFA57F2F10DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B930893-6F66-4C60-B6DC-FFA57F2F10DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D4E44611-EA11-463C-BFFC-7DF902FC19CB} = {07A90BFA-602B-4633-9CA9-6CEF2233E532}

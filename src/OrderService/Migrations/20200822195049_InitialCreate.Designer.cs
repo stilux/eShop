@@ -10,7 +10,7 @@ using OrderService.Providers;
 namespace OrderService.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20200817110434_InitialCreate")]
+    [Migration("20200822195049_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace OrderService.Migrations
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("OrderService.Entity.Order", b =>
+            modelBuilder.Entity("OrderService.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,6 +30,13 @@ namespace OrderService.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Customer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("DeliveryAddress")
                         .HasColumnType("text");
@@ -57,9 +64,6 @@ namespace OrderService.Migrations
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrderStatusId");
@@ -69,7 +73,7 @@ namespace OrderService.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("OrderService.Entity.OrderItem", b =>
+            modelBuilder.Entity("OrderService.Models.OrderItem", b =>
                 {
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
@@ -89,7 +93,7 @@ namespace OrderService.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("OrderService.Entity.OrderStatus", b =>
+            modelBuilder.Entity("OrderService.Models.OrderStatus", b =>
                 {
                     b.Property<byte>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,7 +108,7 @@ namespace OrderService.Migrations
                     b.ToTable("OrderStatus");
                 });
 
-            modelBuilder.Entity("OrderService.Entity.PaymentMethod", b =>
+            modelBuilder.Entity("OrderService.Models.PaymentMethod", b =>
                 {
                     b.Property<byte>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,22 +123,22 @@ namespace OrderService.Migrations
                     b.ToTable("PaymentMethod");
                 });
 
-            modelBuilder.Entity("OrderService.Entity.Order", b =>
+            modelBuilder.Entity("OrderService.Models.Order", b =>
                 {
-                    b.HasOne("OrderService.Entity.OrderStatus", "OrderStatus")
+                    b.HasOne("OrderService.Models.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OrderService.Entity.PaymentMethod", "PaymentMethod")
+                    b.HasOne("OrderService.Models.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId");
                 });
 
-            modelBuilder.Entity("OrderService.Entity.OrderItem", b =>
+            modelBuilder.Entity("OrderService.Models.OrderItem", b =>
                 {
-                    b.HasOne("OrderService.Entity.Order", null)
+                    b.HasOne("OrderService.Models.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
