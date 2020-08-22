@@ -4,6 +4,6 @@ namespace OrderService.Models.Dtos
 {
     public class RemoveFromCartDto
     {
-        public IEnumerable<int> ProductIds { get; set; }
+        public IEnumerable<int> Ids { get; set; }
     }
 }

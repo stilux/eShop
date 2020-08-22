@@ -41,11 +41,9 @@ namespace OrderService.Migrations
                     OrderStatusId = table.Column<byte>(nullable: false),
                     UserId = table.Column<int>(nullable: false),
                     PaymentMethodId = table.Column<byte>(nullable: true),
-                    Paid = table.Column<bool>(nullable: false, defaultValue: false),
                     DeliveryMethod = table.Column<string>(nullable: true),
                     DeliveryAddress = table.Column<string>(nullable: true),
                     PlannedDeliveryDate = table.Column<DateTime>(nullable: true),
-                    DeliveryRequestId = table.Column<int>(nullable: true),
                     ReserveId = table.Column<int>(nullable: true),
                     TotalPrice = table.Column<float>(nullable: false, defaultValue: 0f),
                     CreationDate = table.Column<DateTime>(nullable: false),
@@ -110,7 +108,7 @@ namespace OrderService.Migrations
             migrationBuilder.InsertData(
                 table: "OrderStatus",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Formed" });
+                values: new object[] { 2, "Submitted" });
             
             migrationBuilder.InsertData(
                 table: "OrderStatus",
@@ -120,17 +118,22 @@ namespace OrderService.Migrations
             migrationBuilder.InsertData(
                 table: "OrderStatus",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 4, "ReadyForDelivery" });
+                values: new object[] { 4, "Paid" });
             
             migrationBuilder.InsertData(
                 table: "OrderStatus",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 5, "Delivered" });
+                values: new object[] { 5, "Shipped" });
             
             migrationBuilder.InsertData(
                 table: "OrderStatus",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 6, "Cancel" });
+                values: new object[] { 6, "Delivered" });
+            
+            migrationBuilder.InsertData(
+                table: "OrderStatus",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 7, "Cancelled" });
             
             
             migrationBuilder.InsertData(

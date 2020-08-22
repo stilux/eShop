@@ -2,7 +2,7 @@
 
 namespace OrderService.Exceptions
 {
-    public class CanceledOrderOperationException : Exception
+    public class OrderAlreadyCancelledException : Exception
     {
         
     }

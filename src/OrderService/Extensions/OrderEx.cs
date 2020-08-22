@@ -25,7 +25,7 @@ namespace OrderService.Extensions
                 DeliveryMethod = order.DeliveryMethod,
                 DeliveryAddress = order.DeliveryAddress,
                 TotalPrice = order.TotalPrice,
-                PlannedDeliveryDate = order.PlannedDeliveryDate,
+                DeliveryDate = order.PlannedDeliveryDate,
                 CreationDate = order.CreationDate,
                 UpdateDate = order.UpdateDate,
                 OrderItems = orderItems

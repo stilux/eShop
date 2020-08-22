@@ -35,16 +35,8 @@ namespace OrderService.Migrations
                     b.Property<string>("DeliveryMethod")
                         .HasColumnType("text");
 
-                    b.Property<int?>("DeliveryRequestId")
-                        .HasColumnType("integer");
-
                     b.Property<byte>("OrderStatusId")
                         .HasColumnType("smallint");
-
-                    b.Property<bool>("Paid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
 
                     b.Property<byte?>("PaymentMethodId")
                         .HasColumnType("smallint");

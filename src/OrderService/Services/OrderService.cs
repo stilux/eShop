@@ -53,10 +53,10 @@ namespace OrderService.Services
             if (order == null)
                 throw new OrderNotFoundException();
             
-            if (order.OrderStatusId == (byte)OrderStatus.Cancel)
-                throw new CanceledOrderOperationException();
+            if (order.Cancelled)
+                throw new OrderAlreadyCancelledException();
 
-            order.OrderStatusId = (byte) OrderStatus.Cancel;
+            order.OrderStatusId = (byte) OrderStatus.Cancelled;
             order.UpdateDate = DateTime.Now;
             
             await _context.SaveChangesAsync();
@@ -68,8 +68,8 @@ namespace OrderService.Services
             if (order == null)
                 throw new OrderNotFoundException();
             
-            if (order.OrderStatusId == (byte)OrderStatus.Cancel)
-                throw new CanceledOrderOperationException();
+            if (order.Cancelled)
+                throw new OrderAlreadyCancelledException();
             
             if (order.Paid)
                 throw new OrderAlreadyPaidException();
@@ -103,7 +103,7 @@ namespace OrderService.Services
             if (orderItems.Count > 0)
             {
                 var removedItems = orderItems
-                    .Join(model.ProductIds, i => i.ProductId, im => im, (i, im) => i)
+                    .Join(model.Ids, i => i.ProductId, id => id, (i, im) => i)
                     .ToList();
 
                 if (removedItems.Count > 0)

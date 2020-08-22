@@ -18,8 +18,6 @@ namespace OrderService.Infrastructure.Configurations
             builder.Property(i => i.OrderStatusId).IsRequired();
             builder.Property(i => i.UserId).IsRequired();
             
-            builder.Property(i => i.Paid).IsRequired().HasDefaultValue(false);
-            
             builder.Property(i => i.TotalPrice).IsRequired().HasDefaultValue(0);
             
             builder.Property(i => i.CreationDate).IsRequired();

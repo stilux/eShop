@@ -11,7 +11,7 @@ namespace OrderService.Models.Dtos
         public bool Paid { get; set; }
         public string DeliveryMethod { get; set; }
         public string DeliveryAddress { get; set; }
-        public DateTime? PlannedDeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         public float TotalPrice { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime UpdateDate { get; set; }

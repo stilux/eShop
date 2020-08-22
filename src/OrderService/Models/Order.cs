@@ -16,13 +16,12 @@ namespace OrderService.Models
         public int UserId { get; set; }
         public byte? PaymentMethodId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
-        public bool Paid { get; set; }
+        public bool Paid => OrderStatusId == (byte) Enums.OrderStatus.Paid;
+        public bool Cancelled => OrderStatusId == (byte) Enums.OrderStatus.Cancelled;
         public string DeliveryMethod { get; set; }
         public string DeliveryAddress { get; set; }
         public DateTime? PlannedDeliveryDate { get; set; }
-        
-        public int? DeliveryRequestId { get; set; }
-      
+
         public int? ReserveId { get; set; }
         public float TotalPrice { get; set; }
         public DateTime CreationDate { get; set; }

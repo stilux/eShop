@@ -3,10 +3,11 @@
     public enum OrderStatus : byte
     {
         New = 1,
-        Formed = 2,
+        Submitted = 2,
         ProductReserved = 3,
-        ReadyForDelivery = 4,
-        Delivered = 5,
-        Cancel = 6
+        Paid = 4,
+        Shipped = 5,
+        Delivered = 6,
+        Cancelled = 7
     }
 }

@@ -54,7 +54,7 @@ namespace OrderService.Controllers
             {
                 return NotFound();
             }
-            catch (CanceledOrderOperationException)
+            catch (OrderAlreadyCancelledException)
             {
                 return BadRequest("Order already canceled.");
             }
@@ -80,7 +80,7 @@ namespace OrderService.Controllers
             {
                 return NotFound();
             }
-            catch (CanceledOrderOperationException)
+            catch (OrderAlreadyCancelledException)
             {
                 return BadRequest("Order already canceled.");
             }

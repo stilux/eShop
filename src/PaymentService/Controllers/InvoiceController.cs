@@ -22,7 +22,7 @@ namespace PaymentService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult<string>> CreateDeliveryRequest(CreateInvoiceDto model)
+        public async Task<ActionResult<string>> CreateInvoice(CreateInvoiceDto model)
         {
             if (model.CartItems.Count == 0)
                 return BadRequest();
