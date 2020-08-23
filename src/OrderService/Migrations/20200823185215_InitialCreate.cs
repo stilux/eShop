@@ -40,7 +40,7 @@ namespace OrderService.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderStatusId = table.Column<byte>(nullable: false),
                     CustomerId = table.Column<int>(nullable: false),
-                    Customer = table.Column<string>(nullable: false),
+                    Customer = table.Column<string>(nullable: true),
                     PaymentMethodId = table.Column<byte>(nullable: true),
                     DeliveryMethod = table.Column<string>(nullable: true),
                     DeliveryAddress = table.Column<string>(nullable: true),

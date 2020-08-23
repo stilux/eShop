@@ -10,7 +10,7 @@ using OrderService.Providers;
 namespace OrderService.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20200822195049_InitialCreate")]
+    [Migration("20200823185215_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,6 @@ namespace OrderService.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Customer")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("CustomerId")
