@@ -25,11 +25,11 @@ namespace WarehouseService.Integrations.Consumers
         {
             _logger.LogInformation($"Reserve Products called for order {context.Message.OrderId}");
 
-            var items = context.Message.Items
-                .Select(i => new ReserveItemDto {Id = i.ProductId, Quantity = i.Quantity});
-            
             try
             {
+                var items = context.Message.Items
+                    .Select(i => new ReserveItemDto {Id = i.ProductId, Quantity = i.Quantity});
+                
                 var reserveId = await _warehouseService.ReserveAsync(new ReserveDto { Items = items });
                 await context.RespondAsync<IReserveProductsResult>(new { ReserveId = reserveId, Success = true });
             }

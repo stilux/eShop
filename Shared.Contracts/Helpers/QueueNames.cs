@@ -5,10 +5,15 @@ namespace Shared.Contracts.Helpers
     public class QueueNames
     {
         private const string RabbitUri = "queue:";
+        
+        public static string GetQueueName(string key)
+        {
+            return key.PascalToKebabCaseMessage();
+        }
             
         public static Uri GetMessageUri(string key)
         {
-            return new Uri(RabbitUri + key.PascalToKebabCaseMessage());
+            return new Uri(RabbitUri + GetQueueName(key));
         }
         public static Uri GetActivityUri(string key)
         {

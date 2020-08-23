@@ -1,8 +1,10 @@
-﻿namespace OrderService.Models.Dtos
+﻿using Shared.Contracts.Messages;
+
+namespace OrderService.Models.Dtos
 {
-    public class CartItemDto
+    public class CartItemDto : ICartItem
     {
-        public int Id { get; set; }
+        public int ProductId { get; set; }
         public short Quantity { get; set; }
     }
 }

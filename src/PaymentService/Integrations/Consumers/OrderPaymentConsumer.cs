@@ -25,12 +25,18 @@ namespace PaymentService.Integrations.Consumers
         {
             _logger.LogInformation($"Payment called for order {context.Message.OrderId}");
             
-            var items = context.Message.Items
-                .Select(i => new CartItemDto { ItemCode = i.ProductId, Quantity = i.Quantity})
-                .ToList();
-
             try
             {
+                var items = context.Message.Items
+                    .Select((x, i) => new CartItemDto
+                    {
+                        PositionId = i + 1, 
+                        ItemCode = x.ProductId, 
+                        Name = string.Empty,
+                        Quantity = x.Quantity
+                    })
+                    .ToList();
+                
                 var paymentFormUrl = await _paymentService.CreateInvoiceAsync(new CreateInvoiceDto
                 {
                     OrderId = context.Message.OrderId,

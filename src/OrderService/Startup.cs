@@ -11,7 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OrderService.Configs;
+using OrderService.Courier.Activities;
+using OrderService.Courier.Consumers;
 using OrderService.Sagas.OrderProcessingSaga;
+using Shared.Contracts.Helpers;
 using Shared.Contracts.Messages;
 
 namespace OrderService
@@ -47,11 +50,18 @@ namespace OrderService
             var massTransitConfig = massTransitSettingSection.Get<MassTransitConfig>();
             
             services.AddMassTransit(i =>
-            {              
-                i.AddConsumers(Assembly.GetExecutingAssembly());
-                i.AddActivities(Assembly.GetExecutingAssembly());
+            {        
+                i.AddConsumer<FulfillOrderConsumer>()
+                    .Endpoint(e =>
+                        {
+                            e.Name = QueueNames.GetQueueName(nameof(IFulfillOrder));
+                        }
+                    );
+                i.AddConsumer<ChangeOrderStatusConsumer>();
                 
-                var timeout = TimeSpan.FromSeconds(10);
+                i.AddActivities(Assembly.GetExecutingAssembly());
+
+                var timeout = TimeSpan.FromSeconds(180);
                 i.AddRequestClient<IReserveProducts>(timeout);
                 i.AddRequestClient<ICancelReservation>(timeout);
                 i.AddRequestClient<IOrderPayment>(timeout);
@@ -61,6 +71,7 @@ namespace OrderService
                 i.SetKebabCaseEndpointNameFormatter();
                 i.AddSagaStateMachine<OrderStateMachine, OrderState>()                
                     .InMemoryRepository();
+                
                 i.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseInMemoryOutbox();
@@ -76,6 +87,8 @@ namespace OrderService
             });
             
             services.AddMassTransitHostedService();
+            
+            services.AddScoped<FulfillOrderActivity>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -94,7 +94,7 @@ namespace OrderService.Services
                 .Select(i => new OrderItem
                 {
                     OrderId = orderId,
-                    ProductId = i.Id,
+                    ProductId = i.ProductId,
                     Quantity = i.Quantity
                 })
                 .ToList();

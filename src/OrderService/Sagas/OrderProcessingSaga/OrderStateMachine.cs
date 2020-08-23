@@ -29,19 +29,19 @@ namespace OrderService.Sagas.OrderProcessingSaga
                     .TransitionTo(Submitted)
             );
             
-            During(Submitted,
-                When(ProductsReserved)
-                    .Then(i => logger.LogInformation($"Order {i.Instance.OrderId} reserved."))
-                    .SendAsync(ChangeOrderStatusMessageUri, context => CreateChangeOrderStatusMessage(context, OrderStatus.ProductReserved))
-                    .TransitionTo(Reserved)
-            );
-            
-            During(Reserved,
-                When(OrderPaid)
-                    .Then(i => logger.LogInformation($"Order {i.Instance.OrderId} paid."))
-                    .SendAsync(ChangeOrderStatusMessageUri, context => CreateChangeOrderStatusMessage(context, OrderStatus.Paid))
-                    .TransitionTo(Paid)
-            );
+            // During(Submitted,
+            //     When(ProductsReserved)
+            //         .Then(i => logger.LogInformation($"Order {i.Instance.OrderId} reserved."))
+            //         .SendAsync(ChangeOrderStatusMessageUri, context => CreateChangeOrderStatusMessage(context, OrderStatus.ProductReserved))
+            //         .TransitionTo(Reserved)
+            // );
+            //
+            // During(Reserved,
+            //     When(OrderPaid)
+            //         .Then(i => logger.LogInformation($"Order {i.Instance.OrderId} paid."))
+            //         .SendAsync(ChangeOrderStatusMessageUri, context => CreateChangeOrderStatusMessage(context, OrderStatus.Paid))
+            //         .TransitionTo(Paid)
+            // );
             
             DuringAny(
                 When(OrderFulfillFaulted)

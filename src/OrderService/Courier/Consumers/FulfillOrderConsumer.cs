@@ -38,14 +38,14 @@ namespace OrderService.Courier.Consumers
             });
             
             builder.AddActivity("Payment", QueueNames.GetActivityUri(nameof(PaymentActivity)));
-
-            builder.AddActivity("Delivery", QueueNames.GetActivityUri(nameof(DeliveryActivity)), new
-            {
-                order.Id,
-                order.DeliveryAddress,
-                order.Customer,
-                order.DeliveryDate
-            });
+            
+            // builder.AddActivity("Delivery", QueueNames.GetActivityUri(nameof(DeliveryActivity)), new
+            // {
+            //     order.Id,
+            //     order.DeliveryAddress,
+            //     order.Customer,
+            //     order.DeliveryDate
+            // });
 
             builder.AddVariable("CorrelationId", context.Message.CorrelationId);
             builder.AddVariable("OrderId", context.Message.OrderId);
