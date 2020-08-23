@@ -36,6 +36,7 @@ namespace WarehouseService
                 => options.UseNpgsql(_configuration.GetConnectionString("WarehouseDBConnection")));
             
             services.AddScoped<IWarehouseService, Services.WarehouseService>();
+            services.AddSingleton<IWarehouseDbInitializerService, WarehouseDbInitializerService>();
         }
 
         private void ConfigureMassTransit(IServiceCollection services)
@@ -82,6 +83,10 @@ namespace WarehouseService
             var serviceProvider = serviceScope.ServiceProvider;
             
             serviceProvider.GetRequiredService<WarehouseContext>().Database.Migrate();
+            
+            var config = serviceProvider.GetRequiredService<IConfiguration>();
+            var count = config.GetSection("DbInitialize").GetValue<int>("ItemsCount");
+            serviceProvider.GetRequiredService<IWarehouseDbInitializerService>().GenerateWarehouseItems(count);
         }
     }
 }
