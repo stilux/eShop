@@ -1,6 +1,9 @@
+using System.Reflection;
+using DeliveryService.Configs;
 using DeliveryService.Filters;
 using DeliveryService.Infrastructure;
 using DeliveryService.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +24,8 @@ namespace DeliveryService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureMassTransit(services);
+                
             services.AddControllers(options => { options.Filters.Add<ValidationFilter>(); })
                 .ConfigureApiBehaviorOptions(options =>
                 {
@@ -31,6 +36,31 @@ namespace DeliveryService
                 => options.UseNpgsql(_configuration.GetConnectionString("DeliveryDBConnection")));
             
             services.AddScoped<IDeliveryService, Services.DeliveryService>();
+        }
+        
+        private void ConfigureMassTransit(IServiceCollection services)
+        {
+            var massTransitSettingSection = _configuration.GetSection("MassTransitConfig");
+            var massTransitConfig = massTransitSettingSection.Get<MassTransitConfig>();
+            
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumers(Assembly.GetExecutingAssembly());
+                x.SetKebabCaseEndpointNameFormatter();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.ConfigureEndpoints(context);
+                    cfg.Host(massTransitConfig.Host, massTransitConfig.VirtualHost,
+                        h =>
+                        {
+                            h.Username(massTransitConfig.Username);
+                            h.Password(massTransitConfig.Password);
+                        }
+                    );
+                });
+            });
+            
+            services.AddMassTransitHostedService();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

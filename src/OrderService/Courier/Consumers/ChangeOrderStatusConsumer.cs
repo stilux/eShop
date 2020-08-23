@@ -20,6 +20,8 @@ namespace OrderService.Courier.Consumers
         
         public async Task Consume(ConsumeContext<IChangeOrderStatus> context)
         {
+            _logger.LogInformation($"Change Order Status called for order {context.Message.OrderId}");
+            
             await _orderService.ChangeOrderStatusAsync(context.Message.OrderId, (OrderStatus) context.Message.OrderStatusId);
         }
     }

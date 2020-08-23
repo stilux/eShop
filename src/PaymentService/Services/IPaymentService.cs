@@ -9,5 +9,6 @@ namespace PaymentService.Services
     public interface IPaymentService
     {
         Task<string> CreateInvoiceAsync(CreateInvoiceDto model);
+        Task CancelPaymentAsync(int orderId);
     }
 }

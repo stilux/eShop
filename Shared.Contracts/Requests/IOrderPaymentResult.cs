@@ -1,8 +1,8 @@
 ﻿namespace Shared.Contracts.Requests
 {
-    public interface IReserveProductsResult
+    public interface IOrderPaymentResult
     {
-        int ReserveId { get; }
+        string PaymentFormUrl { get; }
         
         bool Success { get; }
     }

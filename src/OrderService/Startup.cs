@@ -53,6 +53,10 @@ namespace OrderService
                 
                 var timeout = TimeSpan.FromSeconds(10);
                 i.AddRequestClient<IReserveProducts>(timeout);
+                i.AddRequestClient<ICancelReservation>(timeout);
+                i.AddRequestClient<IOrderPayment>(timeout);
+                i.AddRequestClient<ICancelPayment>(timeout);
+                i.AddRequestClient<IDeliveryRequest>(timeout);
                 
                 i.SetKebabCaseEndpointNameFormatter();
                 i.AddSagaStateMachine<OrderStateMachine, OrderState>()                

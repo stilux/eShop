@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using Shared.Contracts.Events;
 using Shared.Contracts.Messages;
 using Shared.Contracts.Requests;
 using WarehouseService.Models.Dtos;
@@ -27,41 +27,16 @@ namespace WarehouseService.Integrations.Consumers
 
             var items = context.Message.Items
                 .Select(i => new ReserveItemDto {Id = i.ProductId, Quantity = i.Quantity});
-                
-            var reserveId = await _warehouseService.ReserveAsync(new ReserveDto { Items = items });
-            await context.Publish<IProductsReservedEvent>(new
+            
+            try
             {
-                CorrelationId = context.Message.CorrelationId,
-                OrderId = context.Message.OrderId,
-                ReserveId = reserveId
-            });
-            
-            await context.RespondAsync<IReserveProductsResult>(new { ReserveId = reserveId });
-            
-            // try
-            // {
-            //     _logger.LogInformation($"Reserve Products called for order {context.Message.OrderId}");
-            //
-            //     var items = context.Message.Items
-            //         .Select(i => new ReserveItemDto {Id = i.ProductId, Quantity = i.Quantity});
-            //     
-            //     var reserveId = await _warehouseService.ReserveAsync(new ReserveDto { Items = items });
-            //     await context.Publish<IProductsReservedEvent>(new
-            //     {
-            //         CorrelationId = context.Message.CorrelationId,
-            //         OrderId = context.Message.OrderId,
-            //         ReserveId = reserveId
-            //     });
-            // }
-            // catch(Exception ex)
-            // {
-            //     await context.Publish<IProductsReservationFailedEvent>(new
-            //     {
-            //         CorrelationId = context.Message.CorrelationId,
-            //         OrderId = context.Message.OrderId,
-            //         Reason = ex.Message
-            //     });
-            // }
+                var reserveId = await _warehouseService.ReserveAsync(new ReserveDto { Items = items });
+                await context.RespondAsync<IReserveProductsResult>(new { ReserveId = reserveId, Success = true });
+            }
+            catch (Exception)
+            {
+                await context.RespondAsync<IReserveProductsResult>(new { Success = false });
+            }
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace Shared.Contracts.Requests
 {
-    public interface IReserveProductsResult
+    public interface IDeliveryRequestResult
     {
-        int ReserveId { get; }
-        
         bool Success { get; }
     }
 }

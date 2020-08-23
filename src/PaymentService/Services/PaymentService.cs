@@ -31,5 +31,10 @@ namespace PaymentService.Services
             
             return invoice.PaymentFormUrl;
         }
+
+        public Task CancelPaymentAsync(int orderId)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface ICancelReservation : IOrderMessage
     {
-        
+        int ReserveId { get; }
     }
 }
