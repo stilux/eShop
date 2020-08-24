@@ -30,8 +30,8 @@ namespace WarehouseService.Integrations.Consumers
                 var items = context.Message.Items
                     .Select(i => new ReserveItemDto {Id = i.ProductId, Quantity = i.Quantity});
                 
-                var reserveId = await _warehouseService.ReserveAsync(new ReserveDto { Items = items });
-                await context.RespondAsync<IReserveProductsResult>(new { ReserveId = reserveId, Success = true });
+                var result = await _warehouseService.ReserveAsync(new ReserveDto { Items = items });
+                await context.RespondAsync<IReserveProductsResult>(new { result.ReserveId, Success = true });
             }
             catch (Exception)
             {
