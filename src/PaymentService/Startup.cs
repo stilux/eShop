@@ -33,7 +33,10 @@ namespace PaymentService
                 });
             
             services.AddDbContext<PaymentContext>(options
-                => options.UseNpgsql(_configuration.GetConnectionString("PaymentDBConnection")));
+                => options.UseNpgsql(_configuration.GetConnectionString("PaymentDBConnection"), sqlOption =>
+                {
+                    sqlOption.EnableRetryOnFailure(10);
+                }));
             
             services.AddScoped<IPaymentService, Services.PaymentService>();
         }

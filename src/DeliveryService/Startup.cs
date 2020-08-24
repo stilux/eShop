@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using DeliveryService.Configs;
 using DeliveryService.Filters;
@@ -33,7 +34,10 @@ namespace DeliveryService
                 });
             
             services.AddDbContext<DeliveryContext>(options
-                => options.UseNpgsql(_configuration.GetConnectionString("DeliveryDBConnection")));
+                => options.UseNpgsql(_configuration.GetConnectionString("DeliveryDBConnection"), sqlOption =>
+                    {
+                        sqlOption.EnableRetryOnFailure(10);
+                    }));
             
             services.AddScoped<IDeliveryService, Services.DeliveryService>();
         }

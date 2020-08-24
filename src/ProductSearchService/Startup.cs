@@ -29,7 +29,10 @@ namespace ProductSearchService
                 });
             
             services.AddDbContext<ProductContext>(options
-                => options.UseNpgsql(_configuration.GetConnectionString("ProductDBConnection")));
+                => options.UseNpgsql(_configuration.GetConnectionString("ProductDBConnection"), sqlOption =>
+                {
+                    sqlOption.EnableRetryOnFailure(10);
+                }));
             
             services.AddScoped<IProductService, ProductService>();
             services.AddSingleton<IProductDbInitializerService, ProductDbInitializerService>();

@@ -39,7 +39,10 @@ namespace OrderService
                 });
             
             services.AddDbContext<OrderContext>(options
-                => options.UseNpgsql(_configuration.GetConnectionString("OrderDBConnection")));
+                => options.UseNpgsql(_configuration.GetConnectionString("OrderDBConnection"), sqlOption =>
+                {
+                    sqlOption.EnableRetryOnFailure(10);
+                }));
             
             services.AddScoped<IOrderService, OrderService.Services.OrderService>();
         }

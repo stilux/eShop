@@ -33,7 +33,10 @@ namespace WarehouseService
                 });
             
             services.AddDbContext<WarehouseContext>(options
-                => options.UseNpgsql(_configuration.GetConnectionString("WarehouseDBConnection")));
+                => options.UseNpgsql(_configuration.GetConnectionString("WarehouseDBConnection"), sqlOption =>
+                {
+                    sqlOption.EnableRetryOnFailure(10);
+                }));
             
             services.AddScoped<IWarehouseService, Services.WarehouseService>();
             services.AddSingleton<IWarehouseDbInitializerService, WarehouseDbInitializerService>();
