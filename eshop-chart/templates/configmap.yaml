@@ -96,7 +96,7 @@ data:
             "Port": {{ .Values.service.port }}
           }
         ],
-        "UpstreamPathTemplate": "/product/{id}",
+        "UpstreamPathTemplate": "/products/{id}",
         "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
       },
       {
@@ -108,8 +108,8 @@ data:
             "Port": {{ .Values.service.port }}
           }
         ],
-        "UpstreamPathTemplate": "/product",
-        "UpstreamHttpMethod": [ "POST" ]
+        "UpstreamPathTemplate": "/products",
+        "UpstreamHttpMethod": [ "GET", "POST" ]
       },
       {
         "DownstreamPathTemplate": "/api/v1/account/{id}",
