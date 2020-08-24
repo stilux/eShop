@@ -1,7 +1,7 @@
 ﻿apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "auth-gateway-chart.fullname" . }}
+  name: {{ include "eshop-chart.fullname" . }}
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -27,7 +27,7 @@ spec:
           image: postgres:latest
           env:
             - name: POSTGRES_HOST
-              value: {{ include "auth-gateway-chart.postgresqlFullname" . | quote }}
+              value: {{ include "eshop-chart.postgresqlFullname" . | quote }}
             - name: POSTGRES_PORT
               value: {{ .Values.postgresql.service.port | quote }}
           command:

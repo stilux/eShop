@@ -1,14 +1,29 @@
 ---
 {{- $authServer := include "auth-server.fullname" . -}}
 {{- $gateway := include "gateway.fullname" . -}}
-{{- $productApi := include "product-api.fullname" . -}}
+{{- $productSearchService := include "product-search-service.fullname" . -}}
+{{- $orderService := include "order-service.fullname" . -}}  
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "auth-gateway-chart.fullname" . }}
+  name: {{ include "eshop-chart.fullname" . }}
   labels:
-    {{- include "auth-gateway-chart.selectorLabels" . | nindent 4 }}
-data:   
+    {{- include "eshop-chart.selectorLabels" . | nindent 4 }}
+data:
+  service-appsettings.json: |-
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": {{ .Values.log.level | quote }},
+          "Microsoft": "Warning",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "DbInitialize": {
+        "ItemsCount": 5000
+      },
+      "AllowedHosts": "*"      
+    }
   gateway-appsettings.json: |-
     {
       "Logging": {
@@ -20,7 +35,7 @@ data:
       },
       "AllowedHosts": "*"
     }
-  product-api-appsettings.json: |-
+  product-search-service-appsettings.json: |-
     {
       "Logging": {
         "LogLevel": {
@@ -31,9 +46,9 @@ data:
       },
       "AllowedHosts": "*",
       "Cache": {
-          "Enabled": {{ .Values.productApi.cache.enabled }},
+          "Enabled": {{ .Values.productSearchService.cache.enabled }},
           "Period": "00:05:00",
-          "SizeLimit": {{ .Values.productApi.cache.sizeLimit }}
+          "SizeLimit": {{ .Values.productSearchService.cache.sizeLimit }}
       },
       "DbInitialize": {
           "ItemsCount": 5000
@@ -49,11 +64,35 @@ data:
     {
       "Routes": [
       {
-        "DownstreamPathTemplate": "/api/v1/product/{id}",
+        "DownstreamPathTemplate": "/api/v1/orders/{id}",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": {{ $productApi | quote }},
+            "Host": {{ $orderService | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/orders/{id}",
+        "UpstreamHttpMethod": [ "GET", "PUT", "DELETE", "POST" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/v1/orders",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $orderService | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/orders",
+        "UpstreamHttpMethod": [ "POST" ]
+      },    
+      {
+        "DownstreamPathTemplate": "/api/v1/products/{id}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $productSearchService | quote }},
             "Port": {{ .Values.service.port }}
           }
         ],
@@ -61,11 +100,11 @@ data:
         "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
       },
       {
-        "DownstreamPathTemplate": "/api/v1/product",
+        "DownstreamPathTemplate": "/api/v1/products",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": {{ $productApi | quote }},
+            "Host": {{ $productSearchService | quote }},
             "Port": {{ .Values.service.port }}
           }
         ],
@@ -146,9 +185,9 @@ apiVersion: extensions/v1beta1
   {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "auth-gateway-chart.fullname" . }}
+  name: {{ include "eshop-chart.fullname" . }}
   labels:
-  {{- include "auth-gateway-chart.labels" . | nindent 4 }}
+  {{- include "eshop-chart.labels" . | nindent 4 }}
 spec:
   rules:    
     - host: {{ .Values.ingress.host | quote }}

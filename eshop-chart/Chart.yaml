@@ -1,5 +1,5 @@
 apiVersion: v2
-name: auth-gateway-chart
+name: eshop-chart
 description: A Helm chart for Kubernetes
 
 type: application
