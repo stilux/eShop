@@ -32,19 +32,42 @@ namespace OrderService.Services
             return order?.MapToOrderDto();
         }
 
-        public async Task<OrderDto> CreateOrderAsync()
+        public async Task<OrderDto> CreateOrderAsync(Guid idempotencyKey)
         {
             var currentDate = DateTime.Now;
-            var order = new Order
-            {
-                OrderStatusId = (byte)OrderStatus.New,
-                CreationDate = currentDate,
-                UpdateDate = currentDate
-            };
             
-            await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-            return order.MapToOrderDto();
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = _context.Database.BeginTransaction();
+                try
+                {
+                    var keyExist = (await _context.IdempotencyKeys.FindAsync(idempotencyKey)) != null;
+                    if (keyExist)
+                        throw new IdempotenceKeyRepeatException();
+                
+                    var order = new Order
+                    {
+                        OrderStatusId = (byte)OrderStatus.New,
+                        CreationDate = currentDate,
+                        UpdateDate = currentDate
+                    };
+                
+                    await _context.Orders.AddAsync(order);
+                    await _context.IdempotencyKeys.AddAsync(new IdempotencyKey
+                        {Key = idempotencyKey, CreationDate = currentDate});
+                
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    
+                    return order.MapToOrderDto();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
 
         public async Task ChangeOrderStatusAsync(int orderId, OrderStatus status)

@@ -9,6 +9,8 @@ namespace OrderService.Providers
         public DbSet<Order> Orders { get; set; }
         
         public DbSet<OrderItem> OrderItems { get; set; }
+        
+        public DbSet<IdempotencyKey> IdempotencyKeys { get; set; }
 
         public OrderContext(DbContextOptions<OrderContext> options) : base(options)
         {
@@ -19,6 +21,7 @@ namespace OrderService.Providers
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new IdempotencyKeyConfiguration());
             modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
         }

@@ -36,72 +36,79 @@ namespace WarehouseService.Services
                 .Select(i => i.Id)
                 .ToList();
             
-            await using var transaction = _context.Database.BeginTransaction();
-            
-            try
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
             {
-                var warehouseItems = await GetWarehouseItems(productIds);
-
-                var reserve = new Reserve
+                await using var transaction = _context.Database.BeginTransaction();
+                try
                 {
-                    CreationDate = DateTime.Now
-                };
+                    var warehouseItems = await GetWarehouseItems(productIds);
 
-                foreach (var item in model.Items)
-                {
-                    var warehouseItem = warehouseItems
-                        .FirstOrDefault(i => i.ProductId == item.Id);
-
-                    if (warehouseItem == null)
-                        throw new ProductNotFoundException(item.Id);
-
-                    if (warehouseItem.Balance < item.Quantity)
-                        throw new InsufficientProductQuantityException(item.Id, warehouseItem.Balance);
-
-                    reserve.ReserveItems.Add(new ReserveItem
+                    var reserve = new Reserve
                     {
-                        ProductId = item.Id,
-                        Quantity = item.Quantity
-                    });
-                }
+                        CreationDate = DateTime.Now
+                    };
 
-                await _context.AddAsync(reserve);
+                    foreach (var item in model.Items)
+                    {
+                        var warehouseItem = warehouseItems
+                            .FirstOrDefault(i => i.ProductId == item.Id);
+
+                        if (warehouseItem == null)
+                            throw new ProductNotFoundException(item.Id);
+
+                        if (warehouseItem.Balance < item.Quantity)
+                            throw new InsufficientProductQuantityException(item.Id, warehouseItem.Balance);
+
+                        reserve.ReserveItems.Add(new ReserveItem
+                        {
+                            ProductId = item.Id,
+                            Quantity = item.Quantity
+                        });
+                    }
+
+                    await _context.AddAsync(reserve);
                 
-                IncreaseProductReservedQuantity(warehouseItems, reserve.ReserveItems);
+                    IncreaseProductReservedQuantity(warehouseItems, reserve.ReserveItems);
 
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
 
-                return reserve.MapToReservationResultDto();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                    return reserve.MapToReservationResultDto();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
 
         public async Task CancelReservationAsync(int reserveId)
         {
-            await using var transaction = _context.Database.BeginTransaction();
-            try
+            var strategy = _context.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
             {
-                var reserve = await _context.Reserves.FindAsync(reserveId);
-                if (reserve == null)
-                    throw new ReserveNotFoundException();
+                await using var transaction = _context.Database.BeginTransaction();
+                try
+                {
+                    var reserve = await _context.Reserves.FindAsync(reserveId);
+                    if (reserve == null)
+                        throw new ReserveNotFoundException();
 
-                await DecreaseProductReservedQuantity(reserveId);
+                    await DecreaseProductReservedQuantity(reserveId);
                 
-                _context.Reserves.Remove(reserve);
+                    _context.Reserves.Remove(reserve);
 
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
 
         private async Task DecreaseProductReservedQuantity(int reserveId)

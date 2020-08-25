@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using OrderService.Models;
 using OrderService.Models.Dtos;
 
 namespace OrderService.Services
@@ -8,7 +8,7 @@ namespace OrderService.Services
     public interface IOrderService
     {
         Task<OrderDto> GetOrderAsync(int orderId);
-        Task<OrderDto> CreateOrderAsync();
+        Task<OrderDto> CreateOrderAsync(Guid idempotencyKey);
         Task ChangeOrderStatusAsync(int orderId, Enums.OrderStatus status);
         Task<string> PayOrderAsync(int orderId);
         Task<IList<OrderItemDto>> GetCartItemsAsync(int orderId);

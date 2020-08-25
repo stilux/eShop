@@ -19,6 +19,20 @@ namespace OrderService.Migrations
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            modelBuilder.Entity("OrderService.Models.IdempotencyKey", b =>
+                {
+                    b.Property<Guid>("Key")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("IdempotencyKeys");
+                });
+
             modelBuilder.Entity("OrderService.Models.Order", b =>
                 {
                     b.Property<int>("Id")

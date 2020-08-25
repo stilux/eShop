@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Automatonymous;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -37,10 +38,23 @@ namespace OrderService.Controllers
         
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<OrderDto>> CreateOrder()
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public async Task<ActionResult<OrderDto>> CreateOrder([FromHeader(Name = "Idempotency-Key")] Guid idempotencyKey)
         {
-            var order = await _orderService.CreateOrderAsync();
-            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            try
+            {
+                var order = await _orderService.CreateOrderAsync(idempotencyKey);
+                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            }
+            catch (IdempotenceKeyRepeatException)
+            {
+                return Conflict();
+            }
+            catch (Exception)
+            {
+                return UnprocessableEntity();
+            }
         }
         
         [HttpPost("{id}/submit")]
