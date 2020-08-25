@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bogus;
+using Microsoft.EntityFrameworkCore;
 using PaymentService.Extensions;
 using PaymentService.Infrastructure;
 using PaymentService.Models.Dtos;
@@ -32,9 +33,16 @@ namespace PaymentService.Services
             return invoice.PaymentFormUrl;
         }
 
-        public Task CancelPaymentAsync(int orderId)
+        public async Task CancelPaymentAsync(int orderId)
         {
-            return Task.CompletedTask;
+            var invoice = await _context.Invoices
+                .FirstOrDefaultAsync(i => i.OrderId == orderId);
+
+            if (invoice != null)
+            {
+                _context.Remove(invoice);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

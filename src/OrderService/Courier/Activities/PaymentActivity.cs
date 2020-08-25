@@ -35,7 +35,7 @@ namespace OrderService.Courier.Activities
             
             var orderItems = await _orderService.GetCartItemsAsync(context.Arguments.OrderId);
             IList<ICartItem> items = orderItems
-                .Select(i => (ICartItem) new CartItemDto {  ProductId = i.ProductId, Quantity = i.Quantity })
+                .Select(i => (ICartItem) new CartItemDto { ProductId = i.ProductId, Quantity = i.Quantity })
                 .ToList();
             
             var response = await _orderPaymentClient.GetResponse<IOrderPaymentResult>(new

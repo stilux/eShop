@@ -9,7 +9,7 @@ using Shared.Contracts.Requests;
 
 namespace OrderService.Courier.Activities
 {
-    public class DeliveryActivity : IExecuteActivity<IDeliveryRequest>
+    public class DeliveryActivity : IActivity<IOrderMessage, IDeliveryLog>
     {
         private readonly IRequestClient<IDeliveryRequest> _deliveryRequestClient;
         private readonly IOrderService _orderService;
@@ -23,7 +23,7 @@ namespace OrderService.Courier.Activities
             _logger = logger;
         }
         
-        public async Task<ExecutionResult> Execute(ExecuteContext<IDeliveryRequest> context)
+        public async Task<ExecutionResult> Execute(ExecuteContext<IOrderMessage> context)
         {
             _logger.LogInformation($"Delivery called for order {context.Arguments.OrderId}");
 
@@ -33,15 +33,26 @@ namespace OrderService.Courier.Activities
             {
                 CorrelationId = context.Arguments.CorrelationId,
                 OrderId = context.Arguments.OrderId,
-                DeliveryAddress = order.DeliveryAddress,
-                Recipient = order.Customer,
+                DeliveryAddress = order.DeliveryAddress ?? string.Empty,
+                Recipient = order.Customer ?? string.Empty,
                 DeliveryDate = order.DeliveryDate
             });
             
             if (!response.Message.Success)
                 throw new InvalidOperationException();
             
-            return context.Completed(new { context.Arguments.OrderId });
+            return context.Completed(new { context.Arguments.CorrelationId, context.Arguments.OrderId });
         }
+
+        public Task<CompensationResult> Compensate(CompensateContext<IDeliveryLog> context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+    public interface IDeliveryLog
+    {
+        Guid CorrelationId { get; }
+        int OrderId { get; }
     }
 }

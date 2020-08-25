@@ -3,10 +3,11 @@ using MassTransit.Courier;
 using Microsoft.Extensions.Logging;
 using OrderService.Enums;
 using OrderService.Services;
+using Shared.Contracts.Messages;
 
 namespace OrderService.Courier.Activities
 {
-    public class SubmitOrderActivity: IActivity<ISubmitOrderArgument, ISubmitOrderLog>
+    public class SubmitOrderActivity: IActivity<IOrderMessage, ISubmitOrderLog>
     {
         private readonly IOrderService _orderService;
         private readonly ILogger<SubmitOrderActivity> _logger;
@@ -17,7 +18,7 @@ namespace OrderService.Courier.Activities
             _logger = logger;
         }
         
-        public async Task<ExecutionResult> Execute(ExecuteContext<ISubmitOrderArgument> context)
+        public async Task<ExecutionResult> Execute(ExecuteContext<IOrderMessage> context)
         {
             _logger.LogInformation($"Submit Order called for order {context.Arguments.OrderId}");
             
@@ -33,12 +34,7 @@ namespace OrderService.Courier.Activities
             return context.Compensated();
         }
     }
-    
-    public interface ISubmitOrderArgument
-    {
-        int OrderId { get; }        
-    }
-    
+
     public interface ISubmitOrderLog
     {
         int OrderId { get; }
